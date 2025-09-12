@@ -36,19 +36,21 @@ class CarWash:
                 dirty_cars.append(car)
         return dirty_cars
 
-    def small_wash(self, car):
-            if car.is_clean:
-                print("Car is already clean!")
-            else:
-                car.is_clean = True
-                self.total_revenue += small_price
+    def get_price(self, car):
+        if car.size.lower() == "small":
+            return self.small_price
+        else:
+            return self.large_price
 
-    def large_wash(self, car):
+
+    def wash(self, car):
             if car.is_clean:
                 print("Car is already clean!")
             else:
                 car.is_clean = True
-                self.total_revenue += large_price
+                price = self.get_price(car)
+                self.total_revenue += price
+
 
 def main():
     name = input("Enter your car wash name: ")
