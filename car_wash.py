@@ -10,7 +10,8 @@ class Car:
         self.is_clean = False #dirty is default status
 
     def __str__(self):
-        return f"{self.owner}, {self.contact_num} - {self.make} {self.model} {self.year} {self.reg} Clean: {self.is_clean}"
+        return (f"{self.owner}, {self.contact_num} - "
+                f"{self.make} {self.model} {self.year} {self.reg} Clean: {self.is_clean}")
 
     def make_clean(self):
         self.is_clean = True
@@ -50,6 +51,7 @@ class CarWash:
                 car.is_clean = True
                 price = self.get_price(car)
                 self.total_revenue += price
+                print("Washed")
 
 
 def main():
@@ -61,23 +63,23 @@ def main():
 
     while(menu):
             print(f'''CAR WASH
-        1) Add car
-        2) View dirty cars
-        3) Wash car
-        4) View revenue
-        5) Exit''')
+1) Add car
+2) View dirty cars
+3) Wash car
+4) View revenue
+5) Exit''')
 
             user_choice = int(input("Please select an option (1/5): "))
 
             #ADD CAR
             if user_choice == 1:
-                owner = input("Enter")
-                reg = input("Enter")
-                contact_num = input("Enter")
-                make = input("Enter")
-                model = input("Enter")
-                year = input("Enter")
-                size = input("Enter")
+                owner = input("Enter owner's name: ")
+                reg = input("Enter registration number: ")
+                contact_num = input("Enter owner's contact number: ")
+                make = input("Enter the make of the car: ")
+                model = input("Enter the model of the car: ")
+                year = input("Enter the year of the car: ")
+                size = input("Enter the size of the car (Small/Large): ")
                 new_car = Car(owner,reg,contact_num,make,model,year,size)
                 car_wash.add_car(new_car)
                 print("Car added.")
@@ -87,6 +89,17 @@ def main():
                 dirty_cars = car_wash.dirty_cars()
                 for car in dirty_cars:
                     print(car)
+
+            if user_choice == 3:
+                car_reg = input("Search registration of car to wash: ")
+                for car in car_wash.cars:
+                    if car_reg.lower() == car.reg.lower():
+                        car_wash.wash(car)
+                    else:
+                        print(f"{car_reg} is not valid.")
+
+            if user_choice == 4:
+                print(car_wash.total_revenue)
 
 
 
