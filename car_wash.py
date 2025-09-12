@@ -36,6 +36,61 @@ class CarWash:
                 dirty_cars.append(car)
         return dirty_cars
 
+    def small_wash(self, car):
+            if car.is_clean:
+                print("Car is already clean!")
+            else:
+                car.is_clean = True
+                self.total_revenue += small_price
+
+    def large_wash(self, car):
+            if car.is_clean:
+                print("Car is already clean!")
+            else:
+                car.is_clean = True
+                self.total_revenue += large_price
+
+def main():
+    name = input("Enter your car wash name: ")
+    small_price = int(input("Enter price of a small wash: "))
+    large_price = int(input("Enter price of large wash: "))
+    car_wash = CarWash(name, small_price, large_price)
+    menu = True
+
+    while(menu):
+            print(f'''CAR WASH
+        1) Add car
+        2) View dirty cars
+        3) Wash car
+        4) View revenue
+        5) Exit''')
+
+            user_choice = int(input("Please select an option (1/5): "))
+
+            #ADD CAR
+            if user_choice == 1:
+                owner = input("Enter")
+                reg = input("Enter")
+                contact_num = input("Enter")
+                make = input("Enter")
+                model = input("Enter")
+                year = input("Enter")
+                size = input("Enter")
+                new_car = Car(owner,reg,contact_num,make,model,year,size)
+                car_wash.add_car(new_car)
+                print("Car added.")
+
+
+            if user_choice == 2:
+                dirty_cars = car_wash.dirty_cars()
+                for car in dirty_cars:
+                    print(car)
+
+
+
+
+if __name__ == '__main__':
+    main()
 
 
 
