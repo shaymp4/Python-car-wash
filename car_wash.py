@@ -1,6 +1,7 @@
 from datetime import datetime
 
 class Car:
+    #Basic car clss with attributes
     def __init__(self,owner,reg,contact_num,make,model,year,size):
         self.owner = owner
         self.reg = reg
@@ -22,13 +23,13 @@ class Car:
         self.is_clean = False
 
 class CarWash:
+    #Basic car wash class with attributes and business methods
     def __init__(self,name,small_price,large_price):
         self.name = name
         self.small_price = small_price
         self.large_price = large_price
         self.total_revenue = 0 #initialised at 0
         self.cars = [] #stores cars
-
 
     def change_small_price(self, price):
         price = input("Enter new price: ")
@@ -38,11 +39,11 @@ class CarWash:
         price = input("Enter new price: ")
         self.large_price = price
 
-
     def add_car(self, car):
         self.cars.append(car)
 
     def dirty_cars(self):
+        #Groups together all dirty cars
         dirty_cars = []
         for car in self.cars:
             if not car.is_clean:
@@ -52,11 +53,13 @@ class CarWash:
     def get_price(self, car):
         if car.size.lower() == "small":
             return self.small_price
-        else:
+        elif car.size.lower() == "large":
             return self.large_price
-
+        else:
+            print("No price available.")
 
     def wash(self, car):
+        #Checks if a car is dirty before washing.
             if car.is_clean:
                 print("Car is already clean!")
             else:
@@ -67,38 +70,53 @@ class CarWash:
 
 
 def main():
-    name = input("Enter your car wash name: ")
-    small_price = int(input("Enter price of a small wash: "))
-    large_price = int(input("Enter price of large wash: "))
-    car_wash = CarWash(name, small_price, large_price)
-    menu = True
+    def create_car_wash():
+        #Creates an instance of a car wash.
+        name = input("Enter your car wash name: ")
+        small_price = int(input("Enter price of a small wash: "))
+        large_price = int(input("Enter price of large wash: "))
+        car_wash = CarWash(name, small_price, large_price)
 
     def empty_validation(prompt):
-        answer = input(prompt).strip()
+        #Ensures user input is not left empty, will loop until field is not empty
         while True:
+            answer = input(prompt).strip()
             if answer:
                 return answer
             else:
                 print("Can not be empty. Please try again")
-                empty_validation(prompt)
 
     def year_validation(prompt):
-        current_year = datetime.now().year
-        oldest_year = 1884 #Oldest running car
-        year = int(empty_validation(prompt))
-        if year > current_year:
-            print(f"Year must be before {current_year}. You entered {year}. ")
-            year_validation(prompt)
-        elif year < oldest_year:
-            print(f"Year must be after {current_year}. You entered {year}. ")
-            year_validation(prompt)
-        elif year:
-            return year
-        else:
-            print(f"Please enter a valid year. You entered {year}")
-            year_validation(prompt)
+        #Checks a year making sure it cant be before 1884 or after current year
+        while True:
+            current_year = datetime.now().year
+            oldest_year = 1884 #Oldest running car
+            year = int(empty_validation(prompt)) #Ensures year is not empty
+            if year > current_year:
+                print(f"Year must be before {current_year}. You entered {year}. ")
+            elif year < oldest_year:
+                print(f"Year must be after {current_year}. You entered {year}. ")
+            elif year:
+                return year
+            else:
+                print(f"Please enter a valid year. You entered {year}")
 
-    while(menu):
+    def add_new_car():
+        #Gets user input relating to all car attributes before making a new car
+        owner = empty_validation("Enter owners name: ")
+        reg = empty_validation("Enter registration number: ")
+        contact_num = empty_validation("Enter owner's contact number: ")
+        make = empty_validation("Enter the make of the car: ")
+        model = empty_validation("Enter the model of the car: ")
+        year = year_validation("Enter the year of the car: ")
+        size = empty_validation("Enter the size of the car (Small/Large): ")
+        new_car = Car(owner, reg, contact_num, make, model, year, size)
+        car_wash.add_car(new_car)
+        print("Car added.")
+
+    create_car_wash()
+
+    while True:
             print(f'''CAR WASH
 1) Add car
 2) View dirty cars
@@ -111,16 +129,7 @@ def main():
 
             #ADD CAR
             if user_choice == 1:
-                owner = empty_validation("Enter owners name: ")
-                reg = empty_validation("Enter registration number: ")
-                contact_num = empty_validation("Enter owner's contact number: ")
-                make = empty_validation("Enter the make of the car: ")
-                model = empty_validation("Enter the model of the car: ")
-                year = year_validation("Enter the year of the car: ")
-                size = empty_validation("Enter the size of the car (Small/Large): ")
-                new_car = Car(owner,reg,contact_num,make,model,year,size)
-                car_wash.add_car(new_car)
-                print("Car added.")
+                add_new_car()
 
 
             if user_choice == 2:
