@@ -71,6 +71,8 @@ class CarWash:
                 car.is_clean = True
                 price = self.get_price(car)
                 self.total_revenue += price
+                save_car_wash(self)
+                save_car(car)
                 print("Washed")
 
 def add_new_car(car_wash):
@@ -91,7 +93,7 @@ def save_car(car):
     with open("cars.txt", "a") as file:
         file.write(f"{car.owner},{car.reg},{car.contact_num},"
                     f"{car.make},{car.model},{car.year},{car.size}\n")
-        print("car has been saved to cars.txt")
+        print(f"{car.owner}'s car has been saved to cars.txt")
 
 def load_cars(car_wash):
     with open("cars.txt", "r") as file:
@@ -110,13 +112,36 @@ def view_dirty_cars(car_wash):
     dirty_cars = car_wash.dirty_cars()
     for car in dirty_cars:
         print(car)
-        
+
 def create_car_wash():
     #Creates an instance of a car wash.
     name = input("Enter your car wash name: ")
     small_price = int(input("Enter price of a small wash: "))
     large_price = int(input("Enter price of large wash: "))
-    return CarWash(name, small_price, large_price)
+    car_wash = CarWash(name, small_price, large_price)
+    save_car_wash(car_wash)
+    return car_wash
+
+def save_car_wash(car_wash):
+    with open("car_wash.txt", "w") as file:
+        file.write(f"{car_wash.name},{car_wash.small_price},{car_wash.large_price},{car_wash.total_revenue}")
+        print(f"Your car wash {car_wash.name} has been saved.")
+
+def load_car_wash():
+    try:
+        with open("car_wash.txt", "r") as file:
+            data = file.read().split(",")
+            name, small_price, large_price, revenue = data
+            car_wash = CarWash(name, int(small_price), int(large_price))
+            car_wash.total_revenue = int(revenue)
+            return car_wash
+    except FileNotFoundError:
+        print("No car wash found, please make one:")
+        return create_car_wash()
+    except ValueError as e:
+        print(f"Error reading file. {e}")
+        print("Please create a car wash...")
+        return create_car_wash()
 
 def empty_validation(prompt):
     #Ensures user input is not left empty, will loop until field is not empty
@@ -152,9 +177,8 @@ def size_validation(prompt):
             print("Size must be 'small' or 'large'")
             print(f"You entered {size}")
 
-
 def main():
-    car_wash = create_car_wash()
+    car_wash = load_car_wash()
     load_cars(car_wash)
 
     while True:
