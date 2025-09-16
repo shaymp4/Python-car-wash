@@ -75,6 +75,26 @@ class CarWash:
 
 
 def main():
+
+    def save_car(car):
+        with open("cars.txt", "a") as file:
+            file.write(f"{car.owner},{car.reg},{car.contact_num},"
+                        f"{car.make},{car.model},{car.year},{car.size} \n")
+            print("car has been saved to cars.txt")
+
+    def load_cars():
+        with open("cars.txt", "r") as file:
+            data = file.readlines()
+            for line in data:
+                if line:
+                    fields = [field.strip() for field in line.split(",")]
+                    if len(fields) == 7:
+                        fields[5] = int(fields[5]) #Load year in as int
+                        car = Car(*fields)
+                        car_wash.cars.append(car)
+                    else:
+                        print(f"Skipping line: {line}")
+
     def create_car_wash():
         #Creates an instance of a car wash.
         name = input("Enter your car wash name: ")
@@ -128,14 +148,15 @@ def main():
         new_car = Car(owner, reg, contact_num, make, model, year, size)
         car_wash.add_car(new_car)
         print("Car added.")
+        save_car(new_car)
 
     def view_dirty_cars():
         dirty_cars = car_wash.dirty_cars()
         for car in dirty_cars:
             print(car)
 
-
     car_wash = create_car_wash()
+    load_cars()
 
     while True:
             print(f'''CAR WASH
@@ -164,8 +185,8 @@ def main():
                         car_wash.wash(car)
                         found = True
                         break
-                    if not found:
-                        print(f"{car_reg} is not valid.")
+                if not found:
+                    print(f"{car_reg} is not valid.")
 
 
             if user_choice == 4:
