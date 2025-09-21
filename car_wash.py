@@ -176,7 +176,7 @@ def year_validation(prompt):
         if year > current_year:
             print(f"Year must be before {current_year}. You entered {year}. ")
         elif year < oldest_year:
-            print(f"Year must be after {current_year}. You entered {year}. ")
+            print(f"Year must be after {oldest_year_year}. You entered {year}. ")
         elif year:
             return year
         else:
@@ -216,7 +216,6 @@ def main():
         if user_choice == 3:
             car_reg = input("Search registration of car to wash: ")
             car_wash.wash(car_reg)
-            car_wash.save()
 
         if user_choice == 4:
             print(car_wash.total_revenue)
