@@ -2,7 +2,7 @@ from datetime import datetime
 
 class Car:
     #Basic car clss with attributes
-    def __init__(self,owner,reg,contact_num,make,model,year,size):
+    def __init__(self,owner,reg,contact_num,make,model,year,size,is_clean):
         self.owner = owner
         self.reg = reg
         self.contact_num = contact_num
@@ -36,12 +36,33 @@ class CarWash:
         self.total_revenue = 0 #initialised at 0
         self.cars = [] #stores cars
 
+    def save(self):
+        with open("car_wash.txt", "w") as file:
+            file.write(f"{self.name},{self.small_price},{self.large_price},{self.total_revenue}")
+
+    @classmethod
+    def load(cls):
+        try:
+            with open("car_wash.txt", "r") as file:
+                name, small_price, large_price, revenue = file.read().split(",")
+                car_wash = cls(name, int(small_price), int(large_price))
+                car_wash.total_revenue = int(revenue)
+                return car_wash
+        except FileNotFoundError:
+            print("No car wash found, please make one:")
+            return create_car_wash()
+        except ValueError as e:
+            print(f"Error reading file. {e}")
+            print("Please create a car wash...")
+            return create_car_wash()
+
+    def change_name(self, name):
+        self.name = name
+
     def change_small_price(self, price):
-        price = input("Enter new price: ")
         self.small_price = price
 
     def change_large_price(self, price):
-        price = input("Enter new price: ")
         self.large_price = price
 
     def add_car(self, car):
@@ -63,17 +84,20 @@ class CarWash:
         else:
             print("No price available.")
 
-    def wash(self, car):
-        #Checks if a car is dirty before washing.
-            if car.is_clean:
-                print("Car is already clean!")
-            else:
-                car.is_clean = True
-                price = self.get_price(car)
-                self.total_revenue += price
-                save_car_wash(self)
-                save_car(car)
-                print("Washed")
+    def wash(self, reg):
+        for car in self.cars:
+            if car.reg.lower() == reg.lower():
+                if car.is_clean:
+                    print(f"{reg} has already been washed.")
+                else:
+                    car.is_clean = True
+                    price = self.get_price(car)
+                    self.total_revenue += price
+                    print(f"{reg} has been washed.")
+                    save_car(self) #Save updated car status
+                    self.save() #Save updated revenue
+                return
+        print(f"No car with reg: {reg} exists.")
 
 def add_new_car(car_wash):
     #Gets user input relating to all car attributes before making a new car
@@ -84,29 +108,40 @@ def add_new_car(car_wash):
     model = empty_validation("Enter the model of the car: ")
     year = year_validation("Enter the year of the car: ")
     size = size_validation("Enter the size of the car (Small/Large): ")
-    new_car = Car(owner, reg, contact_num, make, model, year, size)
+    is_clean = False #Car is dirty by default
+    new_car = Car(owner, reg, contact_num, make, model, year, size, is_clean)
     car_wash.add_car(new_car)
-    print("Car added.")
-    save_car(new_car)
+    print(f"{owner}'s car has been added and saved.")
+    save_car(car_wash)
 
-def save_car(car):
-    with open("cars.txt", "a") as file:
-        file.write(f"{car.owner},{car.reg},{car.contact_num},"
-                    f"{car.make},{car.model},{car.year},{car.size}\n")
-        print(f"{car.owner}'s car has been saved to cars.txt")
+def save_car(car_wash):
+    with open("cars.txt", "w") as file:
+        for car in car_wash.cars:
+            file.write(f"{car.owner},{car.reg},{car.contact_num},"
+                        f"{car.make},{car.model},{car.year},{car.size},{car.is_clean}\n")
 
 def load_cars(car_wash):
-    with open("cars.txt", "r") as file:
-        data = file.readlines()
-        for line in data:
-            if line:
+    try:
+        with open("cars.txt", "r") as file:
+            data = file.readlines()
+            for line in data:
+                line = line.strip()
+                if not line:
+                    continue #Skip empty lines
                 fields = [field.strip() for field in line.split(",")]
-                if len(fields) == 7:
-                    fields[5] = int(fields[5]) #Load year in as int
-                    car = Car(*fields)
-                    car_wash.cars.append(car)
+                if len(fields) == 8:
+                    try:
+                        fields[5] = int(fields[5]) #Load year in as int
+                        fields[7] = fields[7].lower() == "true" #Load as bool
+                        car = Car(*fields)
+                        car.is_clean = fields[7]  # Sets clean status
+                        car_wash.cars.append(car)
+                    except ValueError as e:
+                        print(f"Skipping line due to error.{line} - {e}")
                 else:
-                    print(f"Skipping line: {line}")
+                    print(f"Skipping invalid line: {line}")
+    except FileNotFoundError:
+        print("No file found, starting with an empty cars list.")
 
 def view_dirty_cars(car_wash):
     dirty_cars = car_wash.dirty_cars()
@@ -119,30 +154,10 @@ def create_car_wash():
     small_price = int(input("Enter price of a small wash: "))
     large_price = int(input("Enter price of large wash: "))
     car_wash = CarWash(name, small_price, large_price)
-    save_car_wash(car_wash)
+    car_wash.save()
     return car_wash
 
-def save_car_wash(car_wash):
-    with open("car_wash.txt", "w") as file:
-        file.write(f"{car_wash.name},{car_wash.small_price},{car_wash.large_price},{car_wash.total_revenue}")
-        print(f"Your car wash {car_wash.name} has been saved.")
-
-def load_car_wash():
-    try:
-        with open("car_wash.txt", "r") as file:
-            data = file.read().split(",")
-            name, small_price, large_price, revenue = data
-            car_wash = CarWash(name, int(small_price), int(large_price))
-            car_wash.total_revenue = int(revenue)
-            return car_wash
-    except FileNotFoundError:
-        print("No car wash found, please make one:")
-        return create_car_wash()
-    except ValueError as e:
-        print(f"Error reading file. {e}")
-        print("Please create a car wash...")
-        return create_car_wash()
-
+#***Validation Helpers****
 def empty_validation(prompt):
     #Ensures user input is not left empty, will loop until field is not empty
     while True:
@@ -178,7 +193,7 @@ def size_validation(prompt):
             print(f"You entered {size}")
 
 def main():
-    car_wash = load_car_wash()
+    car_wash = CarWash.load()
     load_cars(car_wash)
 
     while True:
@@ -200,14 +215,8 @@ def main():
 
         if user_choice == 3:
             car_reg = input("Search registration of car to wash: ")
-            found = False
-            for car in car_wash.cars:
-                if car_reg.lower() == car.reg.lower():
-                    car_wash.wash(car)
-                    found = True
-                    break
-            if not found:
-                print(f"{car_reg} is not valid.")
+            car_wash.wash(car_reg)
+            car_wash.save()
 
         if user_choice == 4:
             print(car_wash.total_revenue)
