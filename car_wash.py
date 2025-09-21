@@ -10,7 +10,7 @@ class Car:
         self.model = model
         self.year = year
         self.size = size
-        self.is_clean = False #dirty is default status
+        self.is_clean = is_clean #dirty is default status
 
     def __str__(self):
         return (f"""**{self.reg.upper()}**
@@ -197,32 +197,35 @@ def main():
     load_cars(car_wash)
 
     while True:
-        print(f'''CAR WASH
+        try:
+            print(f'''CAR WASH
 1) Add car
 2) View dirty cars
 3) Wash car
 4) View revenue
 5) Exit''')
 
-        user_choice = int(input("Please select an option (1/5): "))
+            user_choice = int(input("Please select an option (1/5): "))
 
-        #ADD CAR
-        if user_choice == 1:
-            add_new_car(car_wash)
+            #ADD CAR
+            if user_choice == 1:
+                add_new_car(car_wash)
 
-        if user_choice == 2:
-            view_dirty_cars(car_wash)
+            if user_choice == 2:
+                view_dirty_cars(car_wash)
 
-        if user_choice == 3:
-            car_reg = input("Search registration of car to wash: ")
-            car_wash.wash(car_reg)
+            if user_choice == 3:
+                car_reg = input("Search registration of car to wash: ")
+                car_wash.wash(car_reg)
 
-        if user_choice == 4:
-            print(car_wash.total_revenue)
+            if user_choice == 4:
+                print(car_wash.total_revenue)
 
-        if user_choice == 5:
-            print("Goodbye!")
-            break
+            if user_choice == 5:
+                print("Goodbye!")
+                break
+        except ValueError:
+            print("Enter a NUMBER (1-5).")
 
 if __name__ == '__main__':
     main()
