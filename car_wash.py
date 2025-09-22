@@ -221,7 +221,7 @@ def year_validation(prompt):
         if year > current_year:
             print(f"Year must be before {current_year}. You entered {year}. ")
         elif year < oldest_year:
-            print(f"Year must be after {oldest_year_year}. You entered {year}. ")
+            print(f"Year must be after {oldest_year}. You entered {year}. ")
         elif year:
             return year
         else:
