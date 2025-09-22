@@ -1,8 +1,9 @@
 Shay,sa57xbo,077,vw,golf,2012,small,True
-Bekah,ma63zcy,077,ford,fiesta,2013,small,False
+Bekah,ma63zcy,077,ford,fiesta,2013,small,True
 Ben,ga63fee,077,ford,focus,2009,small,False
 Marcelo,by45mwv,077,bmw,320d,2008,large,False
 Luke,poa56th,077,fiat,500xl,2020,small,False
 Joe,jo3mc9,077,kia,punto,2006,small,True
 jeff,j30yut,077,honda,civic,2010,small,True
-Rachel,rch56z,077,skoda,octavia,2024,large,False
+Rachel,rch56z,077,skoda,octavia,2024,large,True
+Reggie,bi9r3g,077,vw,beattle,2023,small,False

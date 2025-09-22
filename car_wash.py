@@ -45,7 +45,7 @@ class CarWash:
         try:
             with open("car_wash.txt", "r") as file:
                 name, small_price, large_price, revenue = file.read().split(",")
-                car_wash = cls(name, int(small_price), int(large_price))
+                car_wash = cls(name, float(small_price), float(large_price))
                 car_wash.total_revenue = int(revenue)
                 return car_wash
         except FileNotFoundError:
@@ -151,11 +151,56 @@ def view_dirty_cars(car_wash):
 def create_car_wash():
     #Creates an instance of a car wash.
     name = input("Enter your car wash name: ")
-    small_price = int(input("Enter price of a small wash: "))
-    large_price = int(input("Enter price of large wash: "))
+    small_price = float(input("Enter price of a small wash: "))
+    large_price = float(input("Enter price of large wash: "))
     car_wash = CarWash(name, small_price, large_price)
     car_wash.save()
     return car_wash
+
+def settings(car_wash):
+    while True:
+        try:
+            print(f'''|||***SETTINGS***|||
+1| Change car wash name. (Current: {car_wash.name})
+2| Change small car price. (Current: {car_wash.small_price})
+3| Change large price. (Current: {car_wash.large_price})
+4| Go back <---''')
+
+            user_choice = int(input("Please select an option (1/4): "))
+            if user_choice == 1:
+                print(f"Current name: {car_wash.name}")
+                new_name = empty_validation("Please enter new car wash name: ")
+                car_wash.change_name(new_name)
+                car_wash.save()
+
+            if user_choice == 2:
+                while True:
+                    try:
+                        print(f"Current price: {car_wash.small_price}")
+                        new_price = float(empty_validation("Please enter new price for small cars: "))
+                        car_wash.change_small_price(new_price)
+                        car_wash.save()
+                        break
+                    except ValueError:
+                        print("Price has to be a number.")
+
+            if user_choice == 3:
+                while True:
+                    try:
+                        print(f"Current price: {car_wash.large_price}")
+                        new_price = float(empty_validation("Please enter new price for large cars: "))
+                        car_wash.change_large_price(new_price)
+                        car_wash.save()
+                        break
+                    except ValueError:
+                        print("Price has to be a number.")
+
+            if user_choice ==4:
+                return
+
+        except ValueError:
+            print("Enter a valid NUMBER (1-4)")
+
 
 #***Validation Helpers****
 def empty_validation(prompt):
@@ -198,14 +243,15 @@ def main():
 
     while True:
         try:
-            print(f'''CAR WASH
-1) Add car
-2) View dirty cars
-3) Wash car
-4) View revenue
-5) Exit''')
+            print(f'''|||***{car_wash.name}***|||
+1| Add car
+2| View dirty cars
+3| Wash car
+4| View revenue
+5| Settings
+6| Exit''')
 
-            user_choice = int(input("Please select an option (1/5): "))
+            user_choice = int(input("Please select an option (1/6): "))
 
             #ADD CAR
             if user_choice == 1:
@@ -222,6 +268,9 @@ def main():
                 print(car_wash.total_revenue)
 
             if user_choice == 5:
+                settings(car_wash)
+
+            if user_choice == 6:
                 print("Goodbye!")
                 break
         except ValueError:
